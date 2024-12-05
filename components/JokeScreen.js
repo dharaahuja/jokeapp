@@ -1,7 +1,7 @@
 import { View, Text, Button, ActivityIndicator } from 'react-native';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { featchRandomJoke } from './jokeSlice';
+import { fetchRandomJoke } from './jokeSlice';
 
 export default JokeScreen = () => {
 
@@ -9,7 +9,7 @@ export default JokeScreen = () => {
     const { joke, loading , error } = useSelector((state) => state.joke)
 
     useEffect(() => {
-        dispatch(featchRandomJoke());
+        dispatch(fetchRandomJoke());
     }, [dispatch]);
 
     if(loading) {
@@ -18,9 +18,9 @@ export default JokeScreen = () => {
 
     return (
         <View>
-            <Button title='Fetch Joke' onPress={() => dispatch(featchRandomJoke())} />
+            <Button title='Fetch Joke' onPress={() => dispatch(fetchRandomJoke())} />
 
-            <Text>{joke}</Text>
+            <Text>{JSON.stringify(joke)}</Text>
         </View>
     )
 }
