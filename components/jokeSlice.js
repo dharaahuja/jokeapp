@@ -16,8 +16,9 @@ export const fetchRandomJoke = createAsyncThunk('ramdomJoke/joke', async() => {
     console.log("api called")
     try {
         const response = await axios.get(`https://api.chucknorris.io/jokes/random`);
-        console.log(JSON.stringify(response));
-        return response.json();
+        const value = response.data;
+        console.log(value);
+        return value;
     } catch(error) {
         console.log(error)
         return error
@@ -40,7 +41,6 @@ const jokeSlice = createSlice({
         })
         .addCase(fetchRandomJoke.fulfilled, (state, action) => {
             console.log("fullfiled");
-            console.log(action.payload)
             state.loading = false;
             state.error = false;
             state.joke = action.payload
