@@ -1,14 +1,22 @@
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import { View, Text, Button, ActivityIndicator, StyleSheet, FlatList, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchRandomJoke } from './jokeSlice';
 import FastImage from 'react-native-fast-image';
 import CustomButton from './CustomButton';
+import { addId } from './jokeSlice';
+import { render } from '@testing-library/react';
 
 export default JokeScreen = () => {
 
     const dispatch = useDispatch();
-    const { joke, loading , error } = useSelector((state) => state.joke)
+    const [liked, setLiked] = useState(false);
+    const { joke, loading , error, likeIds } = useSelector((state) => state.joke)
+
+    const toggleLike = () => { 
+        setLiked(!liked);
+        dispatch(addId(joke.id));
+     };
 
     useEffect(() => {
         dispatch(fetchRandomJoke());
@@ -18,8 +26,16 @@ export default JokeScreen = () => {
         return <ActivityIndicator size='large' />
     }
 
+    const renderItem = ({ item }) => ( 
+        <View style={styles.item}> 
+            <Text style={styles.title}>{item}</Text> 
+        </View> 
+        );
+
     if (joke ){
-        return (
+        return(
+        <ScrollView>
+            <CustomButton style={styles.buttonLike} title='Like' onPress={toggleLike} />
             <View style={styles.container}>
                     <View>
                         <FastImage 
@@ -30,11 +46,29 @@ export default JokeScreen = () => {
                     </View>
                 <CustomButton style={styles.nextButton} title='Fetch Joke' onPress={() => dispatch(fetchRandomJoke())} />
             </View>
+            <FlatList 
+                    data={likeIds}
+                    renderItem={ renderItem } 
+                    keyExtractor={item => item}/>
+        </ScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
+    buttonLike:{
+        margin: 25,
+        padding: 20,
+        width: 300,
+        height: 100,
+        flexDirection: 'row-reverse',
+        justifyContent:'flex-end',
+    },
+    outterContainer: { 
+        flex: 1, 
+        justifyContent: 'center',
+        alignItems: 'center',
+     },
     container: {
        backgroundColor: 'red',
         padding: 16,
@@ -77,5 +111,16 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         padding: 20,
-    }
+    },
+    item: { 
+        backgroundColor: '#800001', 
+        padding: 20, 
+        marginVertical: 8, 
+        marginHorizontal: 16, 
+        borderRadius: 20,
+    },
+    title: { 
+        fontSize: 10, 
+        color: 'white',
+    },
 })

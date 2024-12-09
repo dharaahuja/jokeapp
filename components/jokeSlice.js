@@ -1,17 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios";
 
-// export const fetchRandomJoke = async () => {
-//     try {
-//         const response = await axios.get(`https://api.chucknorris.io/jokes/random`);
-//         console.log(JSON.stringify(response.data));
-//         return response.data;
-//     } catch(error) {
-//         console.log(error)
-//         return error
-//     }
-// }
-
 export const fetchRandomJoke = createAsyncThunk('ramdomJoke/joke', async() => {
     console.log("api called")
     try {
@@ -30,9 +19,17 @@ const jokeSlice = createSlice({
     initialState: {
         joke: null,
         loading: false,
-        error: null
+        error: null,
+        likeIds: [],
     },
-    reducers:{},
+    reducers:{
+        addId: (state, action) => {
+            const itemExists = state.likeIds.find(item => item === action.payload)
+            if (!itemExists) {
+                state.likeIds.push(action.payload);
+            }
+        }
+    },
     extraReducers: (builder) => {
         console.log("started");
         builder.addCase(fetchRandomJoke.pending, (state) => {
@@ -53,4 +50,5 @@ const jokeSlice = createSlice({
     }
 })
 
+export const { addId } = jokeSlice.actions
 export default jokeSlice.reducer;
